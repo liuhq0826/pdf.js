@@ -2158,9 +2158,10 @@ if (typeof PDFJSDev === "undefined" || PDFJSDev.test("GENERIC")) {
       // IE10 / IE11 does not include an origin in `blob:`-URLs. So don't block
       // any blob:-URL. The browser's same-origin policy will block requests to
       // blob:-URLs from other origins, so this is safe.
-      if (origin !== viewerOrigin && protocol !== "blob:") {
-        throw new Error("file origin does not match viewer's");
-      }
+      // 修改无法访问远程文件
+      // if (origin !== viewerOrigin && protocol !== "blob:") {
+      //   throw new Error("file origin does not match viewer's");
+      // }
     } catch (ex) {
       PDFViewerApplication.l10n.get("loading_error").then(msg => {
         PDFViewerApplication._documentError(msg, { message: ex?.message });
@@ -2203,6 +2204,17 @@ function reportPageStatsPDFBug({ pageNumber }) {
 
 function webViewerInitialized() {
   const appConfig = PDFViewerApplication.appConfig;
+  // 添加隐藏按钮 start
+  appConfig.toolbar.openFile.hidden = true;
+  appConfig.secondaryToolbar.openFileButton.hidden = true;
+  appConfig.toolbar.print.hidden = true;
+  appConfig.secondaryToolbar.printButton.hidden = true;
+  appConfig.toolbar.download.hidden = true;
+  appConfig.secondaryToolbar.downloadButton.hidden = true;
+  appConfig.toolbar.viewBookmark.hidden = true;
+  appConfig.secondaryToolbar.viewBookmarkButton.hidden = true;
+  // 添加隐藏按钮 end
+
   let file;
   if (typeof PDFJSDev === "undefined" || PDFJSDev.test("GENERIC")) {
     const queryString = document.location.search.substring(1);
